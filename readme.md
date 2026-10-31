@@ -1,5 +1,126 @@
 # Spring Interview Guide - 200+ Questions and Answers
 
+**Learn the concept, find it in code, explain the trade-off, and practise answering aloud.**
+This repository is a collection of small Spring learning applications, not one
+large application. Its goal is to help you understand how Spring works and use
+that understanding in interviews, rather than memorise annotation names.
+
+## Start here
+
+| If you want to... | Read |
+| --- | --- |
+| Understand the project and choose what to study | This overview and the module map below |
+| Prepare step by step, with exercises and a mock interview | [Learning path](docs/learning-path.md) |
+| Understand important concepts and give clear interview answers | [Interview handbook](docs/interview-handbook.md) |
+| Run the examples and understand legacy setup problems | [Setup and troubleshooting](docs/setup-and-troubleshooting.md) |
+| Revise the original broad question list | [Original interview question catalogue](#original-interview-question-catalogue) below |
+
+**Important:** these examples span different generations of Spring. Some are
+deliberate teaching stubs; others use outdated dependencies or configuration.
+They are for local learning, **not production deployment**. The walkthroughs
+explain both what the code actually does and what you should do differently in
+a real application. No framework upgrade is included in these learning notes.
+
+## What is in the project?
+
+| Directory | What it teaches | Walkthrough |
+| --- | --- | --- |
+| `1.presentation/` | Original visual revision slides and diagrams | [Slides guide](1.presentation/readme.md) |
+| `2.spring-in-10-steps/` | Dependency injection, component scanning, bean selection | [Spring Core](2.spring-in-10-steps/readme.md) |
+| `3.spring-mvc/` | A todo web application: controllers, JSP views, forms, validation, login | [Spring MVC](3.spring-mvc/readme.md) |
+| `4.springboot-in-10-steps/` | Boot startup, starters, JSON responses, Actuator | [Spring Boot](4.springboot-in-10-steps/readme.md) |
+| `5.soap-web-services/` | Contract-first XML services, XSD, WSDL, SOAP endpoints | [SOAP](5.soap-web-services/readme.md) |
+| `6.restful-web-services/` | HTTP APIs, validation, errors, JPA, filtering, versioning | [REST and JPA](6.restful-web-services/readme.md) |
+
+`notes.md` is the original course/video topic index. The PDF and presentation ZIP
+are reference artifacts, not programs to build. `src/main/java` contains
+application code, `src/main/resources` contains configuration/data/contracts,
+and `src/test/java` contains tests. Each application has its own `pom.xml`;
+there is **no root Maven build**.
+
+The original catalogue also covers JDBC, AOP and testing concepts that do not
+have full standalone implementations here. Do not assume every listed question
+has a matching runnable example.
+
+## The big picture, without jargon
+
+Imagine a restaurant. The controller takes an order, the service decides how
+to fulfil it, the repository stores or retrieves the information, and the
+response delivers the result. Spring wires the collaborators together.
+
+```text
+Application startup
+  -> Spring creates an ApplicationContext (container)
+  -> scans configured packages and registers beans
+  -> resolves and injects dependencies
+
+Browser or API client
+  -> security filters (when configured)
+  -> servlet dispatches the request
+  -> controller / SOAP endpoint
+  -> service or repository
+  -> JSP HTML, JSON/XML response, or SOAP envelope
+```
+
+**Spring Framework** provides the container and modules such as MVC.
+**Spring MVC** handles servlet-based web requests.
+**Spring Boot** helps configure and launch Spring applications; it does not
+replace Spring or MVC. **Spring Data JPA** reduces repository boilerplate;
+JPA is a persistence specification, and Hibernate is an implementation.
+
+Read the examples in order **2 -> 3 -> 4 -> 6 -> 5**, then use the slides for
+revision. This order builds dependencies before controllers, APIs before
+database relationships, and REST before comparing it with SOAP.
+
+## A first 30-minute study session
+
+1. Open the [Spring Core walkthrough](2.spring-in-10-steps/readme.md).
+2. Find `BinarySearchImpl`, `SortAlgorithm`, and its two implementations.
+3. Explain why the search class depends on an interface and why `@Primary`
+   matters when Spring finds two implementations.
+4. Notice that sorting and searching are stubs. Explain the wiring without
+   claiming the program implements a real binary search.
+5. Answer: "How would constructor injection let me test this without Spring?"
+
+For interview answers, use **definition -> mechanism -> code example ->
+limitation/trade-off**. A good answer explains why a feature exists, not just
+what its annotation is called.
+
+## Running and contributing
+
+Clone your copy with:
+
+```bash
+git clone https://github.com/rishabhtesla/spring-interview-guide.git
+cd spring-interview-guide
+```
+
+Choose the JDK for the individual module, not for the whole repository.
+Modules 2 and 4 target Java 17 and Boot `3.0.0-M4`; module 3 targets Java 17
+with Spring MVC 5; modules 5 and 6 target Java 8 and Boot `2.0.0.RELEASE`.
+Read the [setup guide](docs/setup-and-troubleshooting.md) before running Maven:
+old milestone repositories, mixed validation APIs, and old container tooling
+can prevent a clean run.
+
+When improving an example, explain the expected behaviour, add a focused test,
+and keep generated SOAP classes separate from hand-written business logic.
+Never commit real credentials or treat demo authentication as a deployment
+template.
+
+## Attribution
+
+The original course examples and question catalogue come from
+[in28minutes/spring-interview-guide](https://github.com/in28minutes/spring-interview-guide).
+This copy adds learning walkthroughs and interview preparation material.
+The original content and [license](LICENSE) are retained; presentation tooling
+has its own [license](1.presentation/LICENSE).
+
+## Original interview question catalogue
+
+The following is the original course introduction and question list. It is a
+broad revision checklist, not a claim that all 200+ questions have detailed
+answers in this repository. Use the handbook for worked explanations.
+
 [![Image](https://www.springboottutorial.com/images/Course-Java-Interview-Guide-200-Interview-Questions-and-Answers.png "Java Interview Guide : 200+ Interview Questions and Answers")](https://www.udemy.com/course/java-interview-questions-and-answers/)
 
 

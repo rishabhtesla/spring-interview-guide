@@ -7,15 +7,11 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class SpringIn5StepsApplication {
 
-    // What are the beans?
-    // What are the dependencies of a bean?
-    // Where to search for beans? => No need
+    // @SpringBootApplication scans this package tree for components and wires their dependencies.
 
     public static void main(String[] args) {
 
-        // BinarySearchImpl binarySearch =
-        // new BinarySearchImpl(new QuickSortAlgorithm());
-        // Application Context
+        // Retrieve the managed bean rather than constructing an unwired instance with new.
         ApplicationContext applicationContext = SpringApplication.run(SpringIn5StepsApplication.class, args);
 
         BinarySearchImpl binarySearch = applicationContext.getBean(BinarySearchImpl.class);

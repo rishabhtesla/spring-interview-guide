@@ -1,3 +1,12 @@
+# Original course topic and timestamp index
+
+These are historical recording notes, not a standalone beginner tutorial or a
+current framework-version guide. Start with the [project overview](readme.md),
+then use the [learning path](docs/learning-path.md) and
+[interview handbook](docs/interview-handbook.md) for worked explanations.
+
+The original topic/timestamp entries are preserved below for reference.
+
 ## Spring
 
 Video 1

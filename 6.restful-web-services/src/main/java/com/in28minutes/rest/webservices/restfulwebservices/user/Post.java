@@ -17,6 +17,7 @@ public class Post {
 	private String description;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
+	// Hide the back-reference in JSON without changing the JPA relationship.
 	@JsonIgnore
 	private User user;
 	

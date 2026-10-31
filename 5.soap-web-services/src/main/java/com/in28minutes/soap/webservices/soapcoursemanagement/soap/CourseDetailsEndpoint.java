@@ -30,8 +30,7 @@ public class CourseDetailsEndpoint {
 	// input - GetCourseDetailsRequest
 	// output - GetCourseDetailsResponse
 
-	// http://in28minutes.com/courses
-	// GetCourseDetailsRequest
+	// SOAP routing matches the payload's namespace/local name, not a REST resource path.
 	@PayloadRoot(namespace = "http://in28minutes.com/courses", localPart = "GetCourseDetailsRequest")
 	@ResponsePayload
 	public GetCourseDetailsResponse processCourseDetailsRequest(@RequestPayload GetCourseDetailsRequest request) {
@@ -60,6 +59,7 @@ public class CourseDetailsEndpoint {
 	}
 
 	private CourseDetails mapCourse(Course course) {
+		// Keep the internal Course model separate from the JAXB-generated public XML contract.
 		CourseDetails courseDetails = new CourseDetails();
 
 		courseDetails.setId(course.getId());

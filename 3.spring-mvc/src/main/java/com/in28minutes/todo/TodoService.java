@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TodoService {
+    // Local demo storage: shared across requests, not thread-safe or durable across restarts.
     private static final List<Todo> todos = new ArrayList<Todo>();
     private static int todoCount = 3;
 

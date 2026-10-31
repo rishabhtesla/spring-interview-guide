@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BinarySearchImpl {
 
+    // Both sort strategies are beans; @Primary on BubbleSortAlgorithm selects the default.
     @Autowired
     private SortAlgorithm sortAlgorithm;
 
@@ -13,7 +14,7 @@ public class BinarySearchImpl {
 
         int[] sortedNumbers = sortAlgorithm.sort(numbers);
         System.out.println(sortAlgorithm);
-        // Search the array
+        // DI teaching stub: sortedNumbers is not searched, so 3 is not a computed index.
         return 3;
     }
 

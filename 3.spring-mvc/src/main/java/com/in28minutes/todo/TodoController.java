@@ -58,9 +58,11 @@ public class TodoController {
 
     @PostMapping("/add-todo")
     public String addTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
+        // Keep BindingResult next to Todo so its binding/validation errors can redisplay the form.
         if (result.hasErrors()) {
             return "todo";
         }
+        // This demo saves today's date, not the submitted targetDate.
         service.addTodo(retrieveLoggedInUserName(), todo.getDesc(), LocalDate.now(), false);
         model.clear();
         return "redirect:list-todos";

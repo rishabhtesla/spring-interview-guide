@@ -100,6 +100,7 @@ public class UserJPAResource {
 
 		User user = userOptional.get();
 		
+		// Post.user owns the association; User.posts is the mappedBy inverse side.
 		post.setUser(user);
 		
 		postRepository.save(post);

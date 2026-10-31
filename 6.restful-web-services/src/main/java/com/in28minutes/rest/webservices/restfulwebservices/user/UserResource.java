@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 public class UserResource {
 
+	// /users uses a Java list; /jpa/users uses a separate repository-backed store.
 	@Autowired
 	private UserDaoService service;
 
@@ -70,8 +71,7 @@ public class UserResource {
 	@PostMapping("/users")
 	public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
 		User savedUser = service.save(user);
-		// CREATED
-		// /user/{id}     savedUser.getId()
+		// Creation returns 201 with the new resource URI in Location, not a user response body.
 		
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest()
