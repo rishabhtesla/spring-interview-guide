@@ -96,7 +96,10 @@ JPA and SOAP. I can explain their request flow and the differences between
 demo code and production design."
 
 Do not claim this is a deployed production system, a completed binary search
-library, a full microservices architecture or a complete automated test suite.
+library or a complete automated test suite for every old module.
+The new [microservices lab](../7.microservices/readme.md) does implement an
+end-to-end auth/gateway/order/event/notification flow with its own tests and
+study plan, but is not an enterprise commerce or identity platform.
 Credit the original in28minutes material. Describe your actual exercises and
 what you learned, especially a bug you understood and how you would test it.
 

@@ -1,0 +1,132 @@
+name: interview-microservices
+
+x-database: &database
+  image: postgres:17.6
+  restart: unless-stopped
+  environment:
+    POSTGRES_USER: lab
+    POSTGRES_PASSWORD: ${DB_PASSWORD:?Run scripts/init-local.sh first}
+    POSTGRES_DB: lab
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U lab -d lab"]
+    interval: 5s
+    timeout: 3s
+    retries: 20
+
+x-app-env: &app-env
+  DB_USER: lab
+  DB_PASSWORD: ${DB_PASSWORD:?Run scripts/init-local.sh first}
+  JWT_ISSUER: interview-lab
+  JWT_PUBLIC_KEY: file:/keys/public.pem
+  KAFKA_BOOTSTRAP: kafka:9092
+
+services:
+  auth-db:
+    <<: *database
+    volumes: [auth-data:/var/lib/postgresql/data]
+  order-db:
+    <<: *database
+    volumes: [order-data:/var/lib/postgresql/data]
+  notification-db:
+    <<: *database
+    volumes: [notification-data:/var/lib/postgresql/data]
+
+  kafka:
+    image: apache/kafka:3.9.1
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    volumes: [kafka-data:/var/lib/kafka/data]
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+
+  kafka-init:
+    image: apache/kafka:3.9.1
+    depends_on:
+      kafka: {condition: service_healthy}
+    entrypoint: ["/bin/bash", "-ec"]
+    command:
+      - |
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic orders.created.v1 --partitions 3 --replication-factor 1
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic orders.created.v1.DLT --partitions 3 --replication-factor 1
+
+  auth-service:
+    user: "${LOCAL_UID:?Run scripts/init-local.sh first}:${LOCAL_GID:?Run scripts/init-local.sh first}"
+    build:
+      context: .
+      args: {SERVICE: auth-service}
+    environment:
+      <<: *app-env
+      SERVER_PORT: 8081
+      DB_URL: jdbc:postgresql://auth-db:5432/lab
+      JWT_PRIVATE_KEY: file:/keys/private.pem
+    volumes:
+      - ./.secrets/auth:/keys:ro
+    depends_on:
+      auth-db: {condition: service_healthy}
+
+  order-service:
+    build:
+      context: .
+      args: {SERVICE: order-service}
+    environment:
+      <<: *app-env
+      SERVER_PORT: 8082
+      DB_URL: jdbc:postgresql://order-db:5432/lab
+    volumes:
+      - ./.secrets/public.pem:/keys/public.pem:ro
+    depends_on:
+      order-db: {condition: service_healthy}
+      kafka-init: {condition: service_completed_successfully}
+
+  notification-service:
+    build:
+      context: .
+      args: {SERVICE: notification-service}
+    environment:
+      <<: *app-env
+      SERVER_PORT: 8083
+      DB_URL: jdbc:postgresql://notification-db:5432/lab
+    volumes:
+      - ./.secrets/public.pem:/keys/public.pem:ro
+    depends_on:
+      notification-db: {condition: service_healthy}
+      kafka-init: {condition: service_completed_successfully}
+
+  api-gateway:
+    build:
+      context: .
+      args: {SERVICE: api-gateway}
+    environment:
+      SERVER_PORT: 8080
+      JWT_ISSUER: interview-lab
+      JWT_PUBLIC_KEY: file:/keys/public.pem
+    volumes:
+      - ./.secrets/public.pem:/keys/public.pem:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      auth-service: {condition: service_started}
+      order-service: {condition: service_started}
+      notification-service: {condition: service_started}
+
+volumes:
+  auth-data:
+  order-data:
+  notification-data:
+  kafka-data:

@@ -1,0 +1,28 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: 10s
+app:
+  jwt:
+    issuer: ${JWT_ISSUER:interview-lab}
+    public-key: ${JWT_PUBLIC_KEY:file:/keys/public.pem}
+  routes:
+    auth: ${AUTH_URL:http://auth-service:8081}
+    orders: ${ORDER_URL:http://order-service:8082}
+    notifications: ${NOTIFICATION_URL:http://notification-service:8083}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

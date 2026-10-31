@@ -1,0 +1,25 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  mvc:
+    problemdetails:
+      enabled: true
+app:
+  jwt:
+    issuer: ${JWT_ISSUER:interview-lab}
+    public-key: ${JWT_PUBLIC_KEY:file:/keys/public.pem}
+    private-key: ${JWT_PRIVATE_KEY:file:/keys/private.pem}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

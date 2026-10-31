@@ -1,0 +1,44 @@
+name: Microservices lab
+
+on:
+  push:
+    paths: ["7.microservices/**", ".github/workflows/microservices.yml"]
+  pull_request:
+    paths: ["7.microservices/**", ".github/workflows/microservices.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: "7.microservices/**/pom.xml"
+      - name: Unit, web, JWT, Kafka and PostgreSQL tests
+        run: mvn -B -q -f 7.microservices/pom.xml verify
+      - name: Build and start the local stack
+        working-directory: 7.microservices
+        run: |
+          sh scripts/init-local.sh
+          docker compose config --quiet
+          docker compose up --build -d
+          sh scripts/wait-local.sh
+      - name: End-to-end API and event assertions
+        working-directory: 7.microservices
+        run: python3 scripts/smoke.py
+      - name: Diagnostic logs on failure
+        if: failure()
+        working-directory: 7.microservices
+        run: docker compose logs --tail=100
+      - name: Stop CI containers
+        if: always()
+        working-directory: 7.microservices
+        run: docker compose down

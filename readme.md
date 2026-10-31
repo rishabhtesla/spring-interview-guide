@@ -31,12 +31,14 @@ a real application. No framework upgrade is included in these learning notes.
 | `4.springboot-in-10-steps/` | Boot startup, starters, JSON responses, Actuator | [Spring Boot](4.springboot-in-10-steps/readme.md) |
 | `5.soap-web-services/` | Contract-first XML services, XSD, WSDL, SOAP endpoints | [SOAP](5.soap-web-services/readme.md) |
 | `6.restful-web-services/` | HTTP APIs, validation, errors, JPA, filtering, versioning | [REST and JPA](6.restful-web-services/readme.md) |
+| `7.microservices/` | New runnable lab: custom JWT auth, gateway, PostgreSQL, Kafka, outbox and notifications | [Microservices learning module](7.microservices/readme.md) |
 
 `notes.md` is the original course/video topic index. The PDF and presentation ZIP
 are reference artifacts, not programs to build. `src/main/java` contains
 application code, `src/main/resources` contains configuration/data/contracts,
-and `src/test/java` contains tests. Each application has its own `pom.xml`;
-there is **no root Maven build**.
+and `src/test/java` contains tests. The older applications each have their own
+`pom.xml`; module 7 has its own multi-module Maven reactor. There is **no
+repository-root Maven build**.
 
 The original catalogue also covers JDBC, AOP and testing concepts that do not
 have full standalone implementations here. Do not assume every listed question
@@ -71,6 +73,8 @@ JPA is a persistence specification, and Hibernate is an implementation.
 Read the examples in order **2 -> 3 -> 4 -> 6 -> 5**, then use the slides for
 revision. This order builds dependencies before controllers, APIs before
 database relationships, and REST before comparing it with SOAP.
+Continue with [module 7](7.microservices/readme.md) for an implemented
+HTTP-to-Kafka microservices flow and a detailed interview/failure lab.
 
 ## A first 30-minute study session
 
@@ -98,6 +102,8 @@ cd spring-interview-guide
 Choose the JDK for the individual module, not for the whole repository.
 Modules 2 and 4 target Java 17 and Boot `3.0.0-M4`; module 3 targets Java 17
 with Spring MVC 5; modules 5 and 6 target Java 8 and Boot `2.0.0.RELEASE`.
+The independent microservices module targets Java 21 and supplies a Docker
+Compose launch path; see its own setup/runbook rather than the legacy commands.
 Read the [setup guide](docs/setup-and-troubleshooting.md) before running Maven:
 old milestone repositories, mixed validation APIs, and old container tooling
 can prevent a clean run.
